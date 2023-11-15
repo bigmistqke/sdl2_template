@@ -8,7 +8,7 @@ ASSETS_BUILD_DIR := $(BUILD_DIR)/assets
 # Compiler and flags
 CXX := g++
 CXXFLAGS := -I/opt/homebrew/include -std=c++17 # macOS: other macOS-option is /usr/local/include
-SDL2_FLAGS := $(shell sdl2-config --cflags --libs) -lSDL2_ttf -lSDL2_mixer # macOS: install with `brew install SDL2`
+SDL2_FLAGS := $(shell sdl2-config --cflags --libs) -lSDL2_ttf -lSDL2_mixer -lmpg123 # macOS: install with `brew install SDL2`
 GLEW_FLAGS := -lGLEW # macOS: install with `brew install glew`
 GL_FLAGS := -framework OpenGL # macOS
 
@@ -47,6 +47,7 @@ run:
 		src=$(SRC_DIR)/$(basename $(notdir $(file))); \
 		target=$(BUILD_DIR)/$(basename $(notdir $(file))); \
 		dep_list="$(deps)"; \
+		args=$(filter-out $<,$(filter-out $@,$(MAKECMDGOALS))); \
 		IFS=',' read -ra dep_array <<< "$$dep_list"; \
 		dep_objects=""; \
 		for dep in $${dep_array[@]}; do \
@@ -56,7 +57,7 @@ run:
 			dep_objects+=" $(BUILD_DIR)/$$dep.o"; \
 		done; \
 		make $$target deps="$$dep_objects"; \
-		$$target; \
+		$$target $$args; \
 	fi
 
 # Ignore "clean" and "run" when running other make targets
