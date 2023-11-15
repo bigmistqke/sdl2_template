@@ -8,7 +8,7 @@ ASSETS_BUILD_DIR := $(BUILD_DIR)/assets
 # Compiler and flags
 CXX := g++
 CXXFLAGS := -I/opt/homebrew/include -std=c++17 # macOS: other macOS-option is /usr/local/include
-SDL2_FLAGS := $(shell sdl2-config --cflags --libs) -lSDL2_ttf # macOS: install with `brew install SDL2`
+SDL2_FLAGS := $(shell sdl2-config --cflags --libs) -lSDL2_ttf -lSDL2_mixer # macOS: install with `brew install SDL2`
 GLEW_FLAGS := -lGLEW # macOS: install with `brew install glew`
 GL_FLAGS := -framework OpenGL # macOS
 
@@ -51,6 +51,7 @@ run:
 	@if [ -z "$(file)" ]; then \
 		echo "Usage: make run file=<source_file> deps=<comma-separated-dependencies>"; \
 	else \
+		make copy_assets; \
 		src=$(SRC_DIR)/$(basename $(notdir $(file))); \
 		target=$(BUILD_DIR)/$(basename $(notdir $(file))); \
 		dep_list="$(deps)"; \
@@ -60,9 +61,7 @@ run:
 				make build/$$dep.o; \
 			fi; \
 		done; \
-		if [ ! -f $$target ]; then \
-			make $$target; \
-		fi; \
+		make $$target; \
 		$$target; \
 	fi
 

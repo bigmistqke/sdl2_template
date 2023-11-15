@@ -5,6 +5,7 @@
     "thread": "cpp",
     "string": "cpp",
     "atomic": "cpp",
-    "ostream": "cpp"
+    "ostream": "cpp",
+    "vector": "cpp"
   }
 }
