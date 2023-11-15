@@ -13,8 +13,11 @@ void AudioCallback(void* userdata, Uint8* stream, int len) {
   int sampleCount = len / sizeof(Sint16); // Number of 16-bit samples
 
   for (int i = 0; i < sampleCount; ++i) {
+    int newSample = static_cast<int>(samples[i]) + static_cast<int>(delayBuffer[0]);
+    newSample = (newSample > 32767) ? 32767 : (newSample < -32768 ? -32768 : newSample);
+
     // Apply the echo effect by adding the delayed audio
-    samples[i] += delayBuffer[0];
+    samples[i] = newSample;
 
     // Push the current audio data to the delay buffer
     delayBuffer.push_back(samples[i] * 0.5);
