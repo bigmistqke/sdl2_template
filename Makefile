@@ -28,7 +28,7 @@ all: build
 
 # Pattern rule to build C++ source files
 build/%: src/%.cpp
-	$(CXX) $(CXXFLAGS) $^ $(SDL2_FLAGS) $(GLEW_FLAGS) $(GL_FLAGS) $(BUILD_DIR)/SDLConsole.o $(BUILD_DIR)/SDLAudioManager.o -o $@
+	$(CXX) $(CXXFLAGS) $^ $(SDL2_FLAGS) $(GLEW_FLAGS) $(GL_FLAGS) $(foreach dep,$(deps), $(dep)) -o $@
 
 # Pattern rule to compile object files
 build/%.o: src/%.cpp src/%.h
@@ -56,12 +56,14 @@ run:
 		target=$(BUILD_DIR)/$(basename $(notdir $(file))); \
 		dep_list="$(deps)"; \
 		IFS=',' read -ra dep_array <<< "$$dep_list"; \
+		dep_objects=""; \
 		for dep in $${dep_array[@]}; do \
 			if [ ! -f $(BUILD_DIR)/$$dep.o ]; then \
 				make build/$$dep.o; \
 			fi; \
+			dep_objects+=" $(BUILD_DIR)/$$dep.o"; \
 		done; \
-		make $$target; \
+		make $$target deps="$$dep_objects"; \
 		$$target; \
 	fi
 
