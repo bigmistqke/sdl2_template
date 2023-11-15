@@ -112,13 +112,12 @@ int main(int argc, char *argv[])
       SDL_QueueAudio(audioDevice, audioBuffer, audioLength);
       bufferIndex += audioLength;
     }
+  }
 
-    /*  if (bufferIndex >= static_cast<int>(wavLength))
-     {
-       quit = true; // Audio playback finished
-     } */
-
-    // SDL_Delay(1); // Simulate some processing time
+  // Clean up and quit
+  if (audioBaseName.substr(audioBaseName.find_last_of('.') + 1) == "wav")
+  {
+    SDL_FreeWAV(wavBuffer);
   }
 
   // Clean up and quit
