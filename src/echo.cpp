@@ -11,6 +11,8 @@ void AudioCallback(void* userdata, Uint8* stream, int len) {
   // Process the audio stream as 16-bit samples (Sint16)
   Sint16* samples = reinterpret_cast<Sint16*>(stream);
   int sampleCount = len / sizeof(Sint16); // Number of 16-bit samples
+  
+  float multiplier = 1.5f; // Replace 2.0f with your desired floating-point value
 
   for (int i = 0; i < sampleCount; ++i) {
     int newSample = static_cast<int>(samples[i]) + static_cast<int>(delayBuffer[0]);
@@ -19,8 +21,21 @@ void AudioCallback(void* userdata, Uint8* stream, int len) {
     // Apply the echo effect by adding the delayed audio
     samples[i] = newSample;
 
+    // Calculate the floating-point index for the delay buffer
+    float floatIndex = i * multiplier;
+    int index = static_cast<int>(floatIndex);
+    float frac = floatIndex - index; // Fractional part
+
+    // Linear interpolation between the current and next sample
+    Sint16 interpolatedSample = 0;
+    if (index < sampleCount - 1) {
+      interpolatedSample = static_cast<Sint16>(
+        samples[index] + frac * (samples[index + 1] - samples[index])
+      ) * 0.5;
+    }
+
     // Push the current audio data to the delay buffer
-    delayBuffer.push_back(samples[i] * 0.5);
+    delayBuffer.push_back(interpolatedSample);
 
     // Remove the oldest sample from the delay buffer
     delayBuffer.erase(delayBuffer.begin());
@@ -43,7 +58,7 @@ int main() {
 
     char* basePath = SDL_GetBasePath();
     // Define the relative path to your audio file from the base path
-    const char* relativePath = "assets/audio.mp3"; // Adjust this path as needed
+    const char* relativePath = "assets/moody.wav"; // Adjust this path as needed
 
     // Construct the full path to the audio file
     std::string fullPath = std::string(basePath) + relativePath;
