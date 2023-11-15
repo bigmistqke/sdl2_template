@@ -34,14 +34,6 @@ build/%: src/%.cpp
 build/%.o: src/%.cpp src/%.h
 	$(CXX) $(CXXFLAGS) $(SDL2_FLAGS) -c $< -o $@
 
-# Target to build SDLConsole
-build/SDLConsole: $(SRC_DIR)/SDLConsole.cpp $(SRC_DIR)/SDLConsole.h
-	$(CXX) $(CXXFLAGS) $(SDL2_FLAGS) -c $< -o $(BUILD_DIR)/SDLConsole.o
-
-# Target to build SDLAudioManager
-build/SDLAudioManager: $(SRC_DIR)/SDLAudioManager.cpp $(SRC_DIR)/SDLAudioManager.h
-	$(CXX) $(CXXFLAGS) $(SDL2_FLAGS) -c $< -o $(BUILD_DIR)/SDLAudioManager.o
-
 # Clean target
 clean:
 	rm -f $(BUILD_DIR)/*
